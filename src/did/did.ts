@@ -1,16 +1,23 @@
+import { walletConnectManager } from "../walletconnect";
+import { GetCredentialsRequest } from "./getcredentialsrequest";
+
 export class DID {
     static getCredentials(query: any): Promise<any> {
-        return new Promise(async (resolve, reject)=>{
-            /*let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
-            res = await intentPlugin.sendIntent("https://did.elastos.net/credaccess", query);
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnected(async ()=>{
+                let request = new GetCredentialsRequest(query);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
-            if (!res || !res.result || !res.result.presentation) {
-                console.warn("Missing presentation. The operation was maybe cancelled.");
+                if (!response || !response.result || !response.result.presentation) {
+                    console.warn("Missing presentation. The operation was maybe cancelled.");
+                    resolve(null);
+                    return;
+                }
+
+                resolve(response.result.presentation);
+            }, ()=>{
                 resolve(null);
-                return;
-            }
-
-            resolve(res.result.presentation);*/
+            });
         });
     }
 
