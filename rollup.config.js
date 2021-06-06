@@ -25,7 +25,7 @@ export default {
         }
     ],
 	external: [
-		'@elastosfoundation/elastos-connectivity-sdk-cordova',
+		'@elastosfoundation/did-js-sdk',
 		'web3',
 		'web3-core'
 	],

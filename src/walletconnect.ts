@@ -32,6 +32,7 @@ class WalletConnectManager {
                 21: "https://api-testnet.elastos.io/eth",
             },
             //bridge: "http://192.168.31.114:5001"
+            bridge: "http://192.168.1.6:5001"
         });
 
         // Enable session (triggers QR Code modal)
@@ -42,7 +43,7 @@ class WalletConnectManager {
         this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
     }
 
-    public async sendCustomRequest(intentUrl: string) {
+    public async sendCustomRequest(intentUrl: string): Promise<any> {
         let connector = await this.walletConnectProvider.getWalletConnector();
 
         let request = {
@@ -57,6 +58,7 @@ class WalletConnectManager {
         console.log("Sending custom request to wallet connect", request);
         const result = await connector.sendCustomRequest(request);
         console.log("Got custom request response", result);
+        return result;
     }
 }
 

@@ -1,20 +1,24 @@
 import { walletConnectManager } from "../walletconnect";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
+import { VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 
 export class DID {
-    static getCredentials(query: any): Promise<any> {
+    static getCredentials(query: any): Promise<VerifiablePresentation> {
         return new Promise((resolve) => {
             walletConnectManager.ensureConnected(async ()=>{
                 let request = new GetCredentialsRequest(query);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
                 if (!response || !response.result || !response.result.presentation) {
-                    console.warn("Missing presentation. The operation was maybe cancelled.");
+                    console.warn("Missing presentation. The operation was maybe cancelled.", response);
                     resolve(null);
                     return;
                 }
 
-                resolve(response.result.presentation);
+                let presentationJson = JSON.stringify(response.result.presentation);
+                //console.log("Presentation as JSON string:", presentationJson);
+                let presentation = VerifiablePresentation.parseContent(presentationJson);
+                resolve(presentation);
             }, ()=>{
                 resolve(null);
             });
