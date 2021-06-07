@@ -27,7 +27,15 @@ export default {
 	external: [
 		'@elastosfoundation/did-js-sdk',
 		'web3',
-		'web3-core'
+		'web3-core',
+		'moment',
+		'rxjs',
+    	'@walletconnect/client',
+    	'@walletconnect/web3-provider',
+
+		// TODO: theoretically we shouldn't have to remove this manually, as we don't include it ourselves.
+		// But can't find the parent dependency for now.
+		'bn.js',
 	],
 	plugins: [
 		postcss({

@@ -1,9 +1,10 @@
+import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
+import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { DID } from "./did/did";
 import { GetCredentialsRequest } from "./did/getcredentialsrequest";
-import type { TMPIConnector } from "./tmp/connectors/index";
 import { walletConnectManager } from "./walletconnect";
 
-export class EssentialsConnector implements TMPIConnector {
+export class EssentialsConnector implements Interfaces.Connectors.IConnector {
     public name: string = "essentials";
 
     private callbackURL: string = null;
@@ -26,6 +27,12 @@ export class EssentialsConnector implements TMPIConnector {
         console.log("Get credentials request");
 
         return DID.getCredentials(query);
+    }
+
+    importCredentials(credentials: VerifiableCredential[]): Promise<Interfaces.Connectors.ImportedCredential[]> {
+        console.log("Import credentials request");
+
+        return DID.importCredentials(credentials);
     }
 
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any> {

@@ -1,6 +1,9 @@
 import { walletConnectManager } from "../walletconnect";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
-import { VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { DIDURL, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { ImportCredentialsRequest } from "./importcredentialsrequest";
+import { ImportedCredential } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/interfaces/connectors";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
@@ -19,6 +22,32 @@ export class DID {
                 //console.log("Presentation as JSON string:", presentationJson);
                 let presentation = VerifiablePresentation.parseContent(presentationJson);
                 resolve(presentation);
+            }, ()=>{
+                resolve(null);
+            });
+        });
+    }
+
+    static importCredentials(credentials: VerifiableCredential[]): Promise<Interfaces.Connectors.ImportedCredential[]> {
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnected(async ()=>{
+                let request = new ImportCredentialsRequest(credentials);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.importedcredentials || !(response.result.importedcredentials instanceof Array)) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let importedCredentials: ImportedCredential[];
+                importedCredentials = (response.result.importedcredentials as string[]).map(credentialUrl => {
+                    return {
+                        id: DIDURL.from(credentialUrl)
+                    }
+                });
+                console.log("Imported credentials:", importedCredentials);
+                resolve(importedCredentials);
             }, ()=>{
                 resolve(null);
             });

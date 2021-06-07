@@ -1,5 +1,6 @@
-import type { TMPIConnector } from "./tmp/connectors/index";
-export declare class EssentialsConnector implements TMPIConnector {
+import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
+import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
+export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
     private callbackURL;
     getDisplayName(): Promise<string>;
@@ -11,6 +12,7 @@ export declare class EssentialsConnector implements TMPIConnector {
      * DID API
      */
     getCredentials(query: any): Promise<any>;
+    importCredentials(credentials: VerifiableCredential[]): Promise<Interfaces.Connectors.ImportedCredential[]>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
     pay(query: any): Promise<any>;
     voteForDPoS(): Promise<void>;
