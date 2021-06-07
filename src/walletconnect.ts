@@ -31,7 +31,8 @@ class WalletConnectManager {
                 20: "https://testnet.elastos.io/eth",
                 21: "https://api-testnet.elastos.io/eth",
             },
-            bridge: "http://192.168.31.114:5001"
+            bridge: "https://walletconnect.elastos.net/v1"
+            //bridge: "http://192.168.31.114:5001"
             //bridge: "http://192.168.1.6:5001"
         });
 
