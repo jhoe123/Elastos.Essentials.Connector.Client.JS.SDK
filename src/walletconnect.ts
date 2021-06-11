@@ -1,5 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Web3 from "web3";
+//import Web3 from "web3";
 
 // HACK - Because wallet connect does not pop up the wallet when custom methods are sent
 import {signingMethods} from "@walletconnect/utils"
@@ -8,7 +8,7 @@ signingMethods.push("essentials_url_intent");
 // https://docs.walletconnect.org/quick-start/dapps/web3-provider
 class WalletConnectManager {
     private walletConnectProvider: WalletConnectProvider = null;
-    private walletConnectWeb3: Web3 = null;
+    //private walletConnectWeb3: Web3 = null;
 
     public async ensureConnected(onConnected: () => void, onCancelled: () => void) {
         if (!this.walletConnectProvider || !this.walletConnectProvider.connected) {
@@ -41,7 +41,22 @@ class WalletConnectManager {
         let enabled = await this.walletConnectProvider.enable();
         console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
 
-        this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
+        //this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
+    }
+
+    /**
+     * Force using an extenral WC provider instead of our own. Useful in apps that have to use wallet
+     * connect independently as well.
+     */
+    public useWalletConnectProvider(provider: WalletConnectProvider) {
+        // Just use it. Don't do any operation such as enable() on it.
+        // Assume everything is done by the app.
+        this.walletConnectProvider = provider;
+        //this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
+    }
+
+    public getWalletConnectProvider(): WalletConnectProvider {
+        return this.walletConnectProvider;
     }
 
     public async sendCustomRequest(intentUrl: string): Promise<any> {

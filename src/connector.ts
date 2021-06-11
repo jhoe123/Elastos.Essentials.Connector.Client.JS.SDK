@@ -1,5 +1,6 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
 import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { DID } from "./did/did";
 import { GetCredentialsRequest } from "./did/getcredentialsrequest";
 import { walletConnectManager } from "./walletconnect";
@@ -18,6 +19,14 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
      */
     public unlinkEssentialsDevice() {
         // TODO
+    }
+
+    public setWalletConnectProvider(provider: WalletConnectProvider) {
+        walletConnectManager.useWalletConnectProvider(provider);
+    }
+
+    public getWalletConnectProvider(): WalletConnectProvider {
+        return walletConnectManager.getWalletConnectProvider();
     }
 
     /**

@@ -1,5 +1,6 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
 import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
     private callbackURL;
@@ -8,6 +9,8 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
      * Method for debug purpose only.
      */
     unlinkEssentialsDevice(): void;
+    setWalletConnectProvider(provider: WalletConnectProvider): void;
+    getWalletConnectProvider(): WalletConnectProvider;
     /**
      * DID API
      */
