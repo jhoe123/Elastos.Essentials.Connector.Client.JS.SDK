@@ -21,6 +21,11 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         // TODO
     }
 
+    /**
+     * Force using an external WC provider instead of the one created by the essentials connector.
+     * Calling this api is neede only in case the application already has its own provider and needs
+     * to share it with this connector.
+     */
     public setWalletConnectProvider(provider: WalletConnectProvider) {
         walletConnectManager.useWalletConnectProvider(provider);
     }
