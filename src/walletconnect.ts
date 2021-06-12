@@ -45,7 +45,7 @@ class WalletConnectManager {
     }
 
     /**
-     * Force using an extenral WC provider instead of our own. Useful in apps that have to use wallet
+     * Force using an external WC provider instead of our own. Useful in apps that have to use wallet
      * connect independently as well.
      */
     public useWalletConnectProvider(provider: WalletConnectProvider) {

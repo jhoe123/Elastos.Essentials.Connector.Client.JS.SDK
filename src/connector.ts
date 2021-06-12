@@ -1,7 +1,7 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
-import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { Interfaces, DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { DID } from "./did/did";
+import { DID as ConnDID } from "./did/did";
 import { GetCredentialsRequest } from "./did/getcredentialsrequest";
 import { walletConnectManager } from "./walletconnect";
 
@@ -39,18 +39,21 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
      */
     async getCredentials(query: any): Promise<any> {
         console.log("Get credentials request");
-
-        return DID.getCredentials(query);
+        return ConnDID.getCredentials(query);
     }
 
-    importCredentials(credentials: VerifiableCredential[]): Promise<Interfaces.Connectors.ImportedCredential[]> {
+    importCredentials(credentials: VerifiableCredential[]): Promise<DID.ImportedCredential[]> {
         console.log("Import credentials request");
+        return ConnDID.importCredentials(credentials);
+    }
 
-        return DID.importCredentials(credentials);
+    signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData> {
+        console.log("Sign data request");
+        return ConnDID.signData(data, jwtExtra, signatureFieldName);
     }
 
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any> {
-        return DID.generateAppIDCredential(appInstanceDID, appDID);
+        return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }
 
     pay(query: any): Promise<any> {

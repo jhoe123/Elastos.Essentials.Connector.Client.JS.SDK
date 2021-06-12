@@ -3,7 +3,9 @@ import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { DIDURL, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
-import { ImportedCredential } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/interfaces/connectors";
+import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
+import { SignDataRequest } from "./signdatarequest";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
@@ -28,7 +30,7 @@ export class DID {
         });
     }
 
-    static importCredentials(credentials: VerifiableCredential[]): Promise<Interfaces.Connectors.ImportedCredential[]> {
+    static importCredentials(credentials: VerifiableCredential[]): Promise<SDKDID.ImportedCredential[]> {
         return new Promise((resolve) => {
             walletConnectManager.ensureConnected(async ()=>{
                 let request = new ImportCredentialsRequest(credentials);
@@ -40,7 +42,7 @@ export class DID {
                     return;
                 }
 
-                let importedCredentials: ImportedCredential[];
+                let importedCredentials: SDKDID.ImportedCredential[];
                 importedCredentials = (response.result.importedcredentials as string[]).map(credentialUrl => {
                     return {
                         id: DIDURL.from(credentialUrl)
@@ -48,6 +50,33 @@ export class DID {
                 });
                 console.log("Imported credentials:", importedCredentials);
                 resolve(importedCredentials);
+            }, ()=>{
+                resolve(null);
+            });
+        });
+    }
+
+    static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData> {
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnected(async ()=>{
+                let request = new SignDataRequest(data, jwtExtra, signatureFieldName);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                } 
+
+                let signedData: SDKDID.SignedData = {
+                    signingDID: response.result.iss,
+                    publicKey: response.result.publickey,
+                    signature: response.result[signatureFieldName],
+                    jwtResponse: response.responseJWT
+                };
+
+                console.log("Signed data:", signedData);
+                resolve(signedData);
             }, ()=>{
                 resolve(null);
             });
