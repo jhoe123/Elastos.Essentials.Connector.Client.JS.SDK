@@ -28,8 +28,8 @@ class WalletConnectManager {
         //  Create WalletConnect Provider
         this.walletConnectProvider = new WalletConnectProvider({
             rpc: {
-                20: "https://testnet.elastos.io/eth",
-                21: "https://api-testnet.elastos.io/eth",
+                20: "https://api.elastos.io/eth",
+                21: "https://api-testnet.elastos.io/eth"
             },
             bridge: "https://walletconnect.elastos.net/v1"
             //bridge: "http://192.168.31.114:5001"
