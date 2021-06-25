@@ -10,7 +10,7 @@ import { SignDataRequest } from "./signdatarequest";
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnected(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async ()=>{
                 let request = new GetCredentialsRequest(query);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -32,7 +32,7 @@ export class DID {
 
     static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnected(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async ()=>{
                 let request = new ImportCredentialsRequest(credentials, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -58,7 +58,7 @@ export class DID {
 
     static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnected(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async ()=>{
                 let request = new SignDataRequest(data, jwtExtra, signatureFieldName);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 

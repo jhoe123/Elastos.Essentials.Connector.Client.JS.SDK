@@ -10,6 +10,10 @@ class WalletConnectManager {
     private walletConnectProvider: WalletConnectProvider = null;
     //private walletConnectWeb3: Web3 = null;
 
+    /**
+     * Makes sure that we are connected to Wallet Connect. If not, a wallet connect session
+     * is started and user may have to scan a QR code to link to his device.
+     */
     public async ensureConnected(onConnected: () => void, onCancelled: () => void) {
         if (!this.walletConnectProvider || !this.walletConnectProvider.connected) {
             await this.setupWalletConnectProvider();
@@ -22,6 +26,24 @@ class WalletConnectManager {
             // Already connected
             onConnected();
         }
+    }
+
+    /**
+     * Same as ensureConnected() except that the connected wallet application MUST be Elastos Essentials, not
+     * another mobile wallet. This is typically used to ensure that the wallet will be able to handle
+     * commands such as DID operations.
+     */
+    public async ensureConnectedToEssentials(onConnected: () => void, onCancelled: () => void) {
+        this.ensureConnected(async () => {
+            // Connected - Now check the peer info to make sure this is essentials.
+            let wc = await this.walletConnectProvider.getWalletConnector();
+            if (!wc.peerMeta || !wc.peerMeta.name || wc.peerMeta.name.toLowerCase().indexOf("essentials") < 0) {
+                throw new Error("This operation is only supported when connected to the Elastos Essentials wallet.");
+            }
+            else {
+                onConnected();
+            }
+        }, onCancelled);
     }
 
     private async setupWalletConnectProvider(): Promise<void> {
