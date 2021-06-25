@@ -38,17 +38,14 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
      * DID API
      */
     async getCredentials(query: any): Promise<any> {
-        console.log("Get credentials request");
         return ConnDID.getCredentials(query);
     }
 
-    importCredentials(credentials: VerifiableCredential[]): Promise<DID.ImportedCredential[]> {
-        console.log("Import credentials request");
-        return ConnDID.importCredentials(credentials);
+    importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]> {
+        return ConnDID.importCredentials(credentials, options);
     }
 
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData> {
-        console.log("Sign data request");
         return ConnDID.signData(data, jwtExtra, signatureFieldName);
     }
 

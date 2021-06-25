@@ -13,25 +13,25 @@ const production = !process.env.ROLLUP_WATCH;
 export default {
 	input: './src/index.ts',
 	output: [
-        {
-            sourcemap: true,
-            format: 'cjs',
-            file: 'dist/index.js'
-        },
-        {
-            sourcemap: true,
-            format: 'esm',
-            file: 'dist.esm/index.js'
-        }
-    ],
+		{
+			sourcemap: true,
+			format: 'cjs',
+			file: 'dist/index.js'
+		},
+		{
+			sourcemap: true,
+			format: 'esm',
+			file: 'dist.esm/index.js'
+		}
+	],
 	external: [
 		'@elastosfoundation/did-js-sdk',
 		'web3',
 		'web3-core',
 		'moment',
 		'rxjs',
-    	'@walletconnect/client',
-    	'@walletconnect/web3-provider',
+		'@walletconnect/client',
+		'@walletconnect/web3-provider',
 
 		// TODO: theoretically we shouldn't have to remove this manually, as we don't include it ourselves.
 		// But can't find the parent dependency for now.
@@ -39,8 +39,8 @@ export default {
 	],
 	plugins: [
 		postcss({
-            extract: 'bundle.css'
-        }),
+			extract: 'bundle.css'
+		}),
 		json(),
 
 		// If you have external dependencies installed from
@@ -50,14 +50,14 @@ export default {
 		// https://github.com/rollup/plugins/tree/master/packages/commonjs
 		resolve({
 			browser: true,
-			dedupe: [''],
+			dedupe: ['@elastosfoundation/did-js-sdk'],
 			preferBuiltins: true
 		}),
 		commonjs(),
-        typescript({
-            sourceMap: true,
-            inlineSources: !production
-        }),
+		typescript({
+			sourceMap: true,
+			inlineSources: !production
+		}),
 
 		// To fix the "exports is not defined" runtime error in browser because some dependencies of
 		// wallet connect have code that generates calls to "exports" which doesn't exist in browsers.
@@ -73,9 +73,9 @@ export default {
 		// instead of npm run dev), minify
 		production && terser(),
 
-        /*analyze({
-            limit: 10
-        })*/
+		/*analyze({
+				limit: 10
+		})*/
 	],
 	watch: {
 		clearScreen: true

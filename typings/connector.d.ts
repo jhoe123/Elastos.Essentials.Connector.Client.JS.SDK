@@ -20,7 +20,7 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
      * DID API
      */
     getCredentials(query: any): Promise<any>;
-    importCredentials(credentials: VerifiableCredential[]): Promise<DID.ImportedCredential[]>;
+    importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]>;
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
     pay(query: any): Promise<any>;

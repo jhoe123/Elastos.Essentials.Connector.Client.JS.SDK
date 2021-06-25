@@ -30,10 +30,10 @@ export class DID {
         });
     }
 
-    static importCredentials(credentials: VerifiableCredential[]): Promise<SDKDID.ImportedCredential[]> {
+    static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]> {
         return new Promise((resolve) => {
             walletConnectManager.ensureConnected(async ()=>{
-                let request = new ImportCredentialsRequest(credentials);
+                let request = new ImportCredentialsRequest(credentials, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
                 if (!response || !response.result || !response.result.importedcredentials || !(response.result.importedcredentials instanceof Array)) {
