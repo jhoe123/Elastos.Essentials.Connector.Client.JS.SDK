@@ -1,6 +1,7 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
 import { Interfaces, DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
 export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
     private callbackURL;
@@ -23,7 +24,7 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
     importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]>;
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
-    pay(query: any): Promise<any>;
+    pay(query: any): Promise<TransactionResult>;
     voteForDPoS(): Promise<void>;
     voteForCRCouncil(): Promise<void>;
     voteForCRProposal(): Promise<void>;

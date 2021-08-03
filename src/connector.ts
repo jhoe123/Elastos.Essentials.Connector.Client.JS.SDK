@@ -1,7 +1,9 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
-import { Interfaces, DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { Interfaces, DID, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
 import { DID as ConnDID } from "./did/did";
+import { Wallet as ConnWallet } from "./wallet/wallet";
 import { GetCredentialsRequest } from "./did/getcredentialsrequest";
 import { walletConnectManager } from "./walletconnect";
 
@@ -53,8 +55,8 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }
 
-    pay(query: any): Promise<any> {
-        throw new Error("Method not implemented.");
+    pay(query: any): Promise<TransactionResult> {
+        return ConnWallet.pay(query);
     }
 
     voteForDPoS(): Promise<void> {
