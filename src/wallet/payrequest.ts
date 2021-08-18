@@ -14,7 +14,7 @@ export class PayRequest implements ISerializableRequest {
             payload += "&currency="+this.query.currency;
 
             if (this.query.memo)
-            payload += "&memo="+this.query.memo;
+            payload += "&memo="+encodeURIComponent(this.query.memo);
 
         return payload;
     }
