@@ -57,6 +57,7 @@ class WalletConnectManager {
             bridge: "https://wallet-connect.trinity-tech.cn/v2", // China
             //bridge: "http://192.168.31.114:5001"
             //bridge: "http://192.168.1.6:5001"
+            //bridge: "http://192.168.31.113:5555"
         });
 
         // Enable session (triggers QR Code modal)

@@ -7,7 +7,7 @@ export class GetCredentialsRequest implements ISerializableRequest {
 
     getPayload(): string {
         let payload = "https://did.elastos.net/credaccess";
-        payload += "?claims="+JSON.stringify(this.query.claims);
+        payload += "?claims="+encodeURIComponent(JSON.stringify(this.query.claims));
 
         // TODO: customization, other params
 
