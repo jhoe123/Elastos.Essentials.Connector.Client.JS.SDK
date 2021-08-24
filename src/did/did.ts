@@ -6,6 +6,7 @@ import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { SignDataRequest } from "./signdatarequest";
+import { AppIDCredentialRequest } from "./appidcredentialrequest";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
@@ -66,7 +67,7 @@ export class DID {
                     console.warn("Missing result data. The operation was maybe cancelled.", response);
                     resolve(null);
                     return;
-                } 
+                }
 
                 let signedData: SDKDID.SignedData = {
                     signingDID: response.result.iss,
@@ -85,6 +86,26 @@ export class DID {
 
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any> {
         console.log("Essentials: app ID Credential generation flow started");
+
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnectedToEssentials(async ()=>{
+                let request = new AppIDCredentialRequest(appInstanceDID, appDID);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let credential = await VerifiableCredential.parseContent(response.result.credential);
+
+                console.log("App ID credential returned by Essentials:", credential);
+                resolve(credential);
+            }, ()=>{
+                resolve(null);
+            });
+        });
 
         return new Promise(async (resolve, reject)=>{
             try {
