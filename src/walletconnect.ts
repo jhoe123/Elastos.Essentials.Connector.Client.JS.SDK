@@ -50,8 +50,10 @@ class WalletConnectManager {
         //  Create WalletConnect Provider
         this.walletConnectProvider = new WalletConnectProvider({
             rpc: {
-                20: "https://api.elastos.io/eth",
-                21: "https://api-testnet.elastos.io/eth"
+                20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
+                21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
+                128: "https://http-mainnet.hecochain.com",   // Heco mainnet
+                256: "https://http-testnet.hecochain.com",   // Heco testnet
             },
             //bridge: "https://walletconnect.elastos.net/v2"
             bridge: "https://wallet-connect.trinity-tech.cn/v2", // China

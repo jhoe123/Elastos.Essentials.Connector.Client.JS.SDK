@@ -1,17 +1,16 @@
-import { walletConnectManager } from "../walletconnect";
-import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { DIDURL, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
-import { Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
-import { SignDataRequest } from "./signdatarequest";
+import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
+import { GetCredentialsRequest } from "./getcredentialsrequest";
+import { ImportCredentialsRequest } from "./importcredentialsrequest";
+import { SignDataRequest } from "./signdatarequest";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnectedToEssentials(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new GetCredentialsRequest(query);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -23,9 +22,9 @@ export class DID {
 
                 let presentationJson = JSON.stringify(response.result.presentation);
                 //console.log("Presentation as JSON string:", presentationJson);
-                let presentation = VerifiablePresentation.parseContent(presentationJson);
+                let presentation = VerifiablePresentation.parse(presentationJson);
                 resolve(presentation);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
@@ -33,7 +32,7 @@ export class DID {
 
     static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnectedToEssentials(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new ImportCredentialsRequest(credentials, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -51,7 +50,7 @@ export class DID {
                 });
                 console.log("Imported credentials:", importedCredentials);
                 resolve(importedCredentials);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
@@ -59,7 +58,7 @@ export class DID {
 
     static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData> {
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnectedToEssentials(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new SignDataRequest(data, jwtExtra, signatureFieldName);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -78,7 +77,7 @@ export class DID {
 
                 console.log("Signed data:", signedData);
                 resolve(signedData);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
@@ -88,7 +87,7 @@ export class DID {
         console.log("Essentials: app ID Credential generation flow started");
 
         return new Promise((resolve) => {
-            walletConnectManager.ensureConnectedToEssentials(async ()=>{
+            walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new AppIDCredentialRequest(appInstanceDID, appDID);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -98,16 +97,16 @@ export class DID {
                     return;
                 }
 
-                let credential = await VerifiableCredential.parseContent(response.result.credential);
+                let credential = await VerifiableCredential.parse(response.result.credential);
 
                 console.log("App ID credential returned by Essentials:", credential);
                 resolve(credential);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
 
-        return new Promise(async (resolve, reject)=>{
+        return new Promise(async (resolve, reject) => {
             try {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
                 /*let res: { result: { credential: string } } = await intentPlugin.sendIntent("https://did.elastos.net/appidcredissue", {
