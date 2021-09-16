@@ -1,10 +1,9 @@
 import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
-import { Interfaces, DID, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { DID, Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { DID as ConnDID } from "./did/did";
 import { Wallet as ConnWallet } from "./wallet/wallet";
-import { GetCredentialsRequest } from "./did/getcredentialsrequest";
 import { walletConnectManager } from "./walletconnect";
 
 export class EssentialsConnector implements Interfaces.Connectors.IConnector {
@@ -45,6 +44,10 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
 
     importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]> {
         return ConnDID.importCredentials(credentials, options);
+    }
+
+    deleteCredentials(credentialIds: string[]): Promise<string[]> {
+        return ConnDID.deleteCredentials(credentialIds);
     }
 
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData> {

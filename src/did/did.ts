@@ -3,6 +3,7 @@ import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
+import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { SignDataRequest } from "./signdatarequest";
@@ -50,6 +51,26 @@ export class DID {
                 });
                 console.log("Imported credentials:", importedCredentials);
                 resolve(importedCredentials);
+            }, () => {
+                resolve(null);
+            });
+        });
+    }
+
+    static async deleteCredentials(credentialIds: string[]): Promise<string[]> {
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnectedToEssentials(async () => {
+                let request = new DeleteCredentialsRequest(credentialIds);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.deletedcredentialsids || !(response.result.deletedcredentialsids instanceof Array)) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                console.log("Deleted credentials IDs:", response.result.deletedcredentialsids);
+                resolve(response.result.deletedcredentialsids);
             }, () => {
                 resolve(null);
             });

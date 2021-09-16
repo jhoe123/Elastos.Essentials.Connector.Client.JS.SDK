@@ -4,6 +4,7 @@ import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typin
 export declare class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation>;
     static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]>;
+    static deleteCredentials(credentialIds: string[]): Promise<string[]>;
     static signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData>;
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any>;
 }
