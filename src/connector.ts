@@ -46,12 +46,16 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.importCredentials(credentials, options);
     }
 
-    deleteCredentials(credentialIds: string[]): Promise<string[]> {
-        return ConnDID.deleteCredentials(credentialIds);
+    deleteCredentials(credentialIds: string[], options?: DID.DeleteCredentialOptions): Promise<string[]> {
+        return ConnDID.deleteCredentials(credentialIds, options);
     }
 
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData> {
         return ConnDID.signData(data, jwtExtra, signatureFieldName);
+    }
+
+    requestPublish(): Promise<string> {
+        return ConnDID.requestPublish();
     }
 
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any> {

@@ -22,8 +22,9 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
      */
     getCredentials(query: any): Promise<any>;
     importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]>;
-    deleteCredentials(credentialIds: string[]): Promise<string[]>;
+    deleteCredentials(credentialIds: string[], options?: DID.DeleteCredentialOptions): Promise<string[]>;
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;
+    requestPublish(): Promise<string>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
     pay(query: any): Promise<TransactionResult>;
     voteForDPoS(): Promise<void>;

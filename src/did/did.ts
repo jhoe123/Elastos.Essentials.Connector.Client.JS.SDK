@@ -1,11 +1,12 @@
 import { DIDURL, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
+import { DeleteCredentialOptions, SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
 import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
+import { RequestPublishRequest } from "./requestpublishrequest";
 import { SignDataRequest } from "./signdatarequest";
 
 export class DID {
@@ -57,10 +58,10 @@ export class DID {
         });
     }
 
-    static async deleteCredentials(credentialIds: string[]): Promise<string[]> {
+    static async deleteCredentials(credentialIds: string[], options?: DeleteCredentialOptions): Promise<string[]> {
         return new Promise((resolve) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
-                let request = new DeleteCredentialsRequest(credentialIds);
+                let request = new DeleteCredentialsRequest(credentialIds, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
                 if (!response || !response.result || !response.result.deletedcredentialsids || !(response.result.deletedcredentialsids instanceof Array)) {
@@ -98,6 +99,26 @@ export class DID {
 
                 console.log("Signed data:", signedData);
                 resolve(signedData);
+            }, () => {
+                resolve(null);
+            });
+        });
+    }
+
+    static async requestPublish(): Promise<string> {
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnectedToEssentials(async () => {
+                let request = new RequestPublishRequest();
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.txid) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                console.log("Transaction ID:", response.result.txid);
+                resolve(response.result.txid);
             }, () => {
                 resolve(null);
             });
