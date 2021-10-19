@@ -1,4 +1,4 @@
-import { VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
+import { JSONObject, VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
 import { DID, Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
 import WalletConnectProvider from "@walletconnect/web3-provider";
@@ -21,6 +21,7 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
      * DID API
      */
     getCredentials(query: any): Promise<any>;
+    issueCredential(holder: string, types: string[], subject: JSONObject, identifier?: string, expirationDate?: string): Promise<VerifiableCredential>;
     importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]>;
     deleteCredentials(credentialIds: string[], options?: DID.DeleteCredentialOptions): Promise<string[]>;
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;

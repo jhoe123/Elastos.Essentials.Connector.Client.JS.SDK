@@ -1,4 +1,4 @@
-import { DIDURL, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { DIDURL, JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { DeleteCredentialOptions, SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { walletConnectManager } from "../walletconnect";
@@ -6,6 +6,7 @@ import { AppIDCredentialRequest } from "./appidcredentialrequest";
 import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
+import { IssueCredentialRequest } from "./issuecredentialrequest";
 import { RequestPublishRequest } from "./requestpublishrequest";
 import { SignDataRequest } from "./signdatarequest";
 
@@ -26,6 +27,34 @@ export class DID {
                 //console.log("Presentation as JSON string:", presentationJson);
                 let presentation = VerifiablePresentation.parse(presentationJson);
                 resolve(presentation);
+            }, () => {
+                resolve(null);
+            });
+        });
+    }
+
+    static async issueCredential(
+        holder: string,
+        types: string[],
+        subject: JSONObject,
+        identifier?: string,
+        expirationDate?: string,
+    ): Promise<VerifiableCredential> {
+        return new Promise((resolve) => {
+            walletConnectManager.ensureConnectedToEssentials(async () => {
+                let request = new IssueCredentialRequest(holder, types, subject, identifier, expirationDate);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.credential) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let issuedCredentialJson: string = response.result.credential;
+                let issuedCredential = VerifiableCredential.parse(issuedCredentialJson);
+                console.log("Issued credential:", issuedCredential);
+                resolve(issuedCredential);
             }, () => {
                 resolve(null);
             });
