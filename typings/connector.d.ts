@@ -1,6 +1,5 @@
-import { JSONObject, VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
-import { DID, Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
@@ -21,13 +20,14 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
      * DID API
      */
     getCredentials(query: any): Promise<any>;
+    requestCredentials(request: DID.CredentialDisclosureRequest): Promise<VerifiablePresentation>;
     issueCredential(holder: string, types: string[], subject: JSONObject, identifier?: string, expirationDate?: string): Promise<VerifiableCredential>;
     importCredentials(credentials: VerifiableCredential[], options?: DID.ImportCredentialOptions): Promise<DID.ImportedCredential[]>;
     deleteCredentials(credentialIds: string[], options?: DID.DeleteCredentialOptions): Promise<string[]>;
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;
     requestPublish(): Promise<string>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
-    pay(query: any): Promise<TransactionResult>;
+    pay(query: any): Promise<Wallet.TransactionResult>;
     voteForDPoS(): Promise<void>;
     voteForCRCouncil(): Promise<void>;
     voteForCRProposal(): Promise<void>;

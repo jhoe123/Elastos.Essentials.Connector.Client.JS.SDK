@@ -1,6 +1,5 @@
-import { JSONObject, VerifiableCredential } from "@elastosfoundation/did-js-sdk/typings";
-import { DID, Interfaces } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
+import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { DID as ConnDID } from "./did/did";
 import { Wallet as ConnWallet } from "./wallet/wallet";
@@ -38,8 +37,12 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
     /**
      * DID API
      */
-    async getCredentials(query: any): Promise<any> {
+    getCredentials(query: any): Promise<any> {
         return ConnDID.getCredentials(query);
+    }
+
+    requestCredentials(request: DID.CredentialDisclosureRequest): Promise<VerifiablePresentation> {
+        return ConnDID.requestCredentials(request);
     }
 
     issueCredential(holder: string, types: string[], subject: JSONObject, identifier?: string, expirationDate?: string): Promise<VerifiableCredential> {
@@ -66,7 +69,7 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }
 
-    pay(query: any): Promise<TransactionResult> {
+    pay(query: any): Promise<Wallet.TransactionResult> {
         return ConnWallet.pay(query);
     }
 

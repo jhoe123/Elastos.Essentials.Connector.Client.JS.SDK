@@ -1,27 +1,29 @@
-import { walletConnectManager } from "../walletconnect";
 import { PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import { walletConnectManager } from "../walletconnect";
 import { PayRequest } from "./payrequest";
 
 export class Wallet {
   static pay(query: PayQuery): Promise<TransactionResult> {
-    return new Promise((resolve) => {
-        walletConnectManager.ensureConnectedToEssentials(async ()=>{
-            let request = new PayRequest(query);
-            let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+    return new Promise((resolve, reject) => {
+      walletConnectManager.ensureConnectedToEssentials(async () => {
+        let request = new PayRequest(query);
+        let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
-            if (!response || !response.result || !response.result.status) {
-                console.warn("Missing response status. The operation was maybe cancelled.", response);
-                resolve(null);
-                return;
-            }
+        if (!response || !response.result || !response.result.status) {
+          console.warn("Missing response status. The operation was maybe cancelled.", response);
+          resolve(null);
+          return;
+        }
 
-            resolve({
-              txId: response.result.txid,
-              status: response.result.status
-            });
-        }, ()=>{
-            resolve(null);
+        resolve({
+          txId: response.result.txid,
+          status: response.result.status
         });
+      }, () => {
+        resolve(null);
+      }).catch(e => {
+        reject(e);
+      });
     });
   }
 }

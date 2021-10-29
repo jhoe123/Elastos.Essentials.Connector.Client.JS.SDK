@@ -7,12 +7,13 @@ import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { IssueCredentialRequest } from "./issuecredentialrequest";
+import { RequestCredentialsRequest } from "./requestcredentialsrequest";
 import { RequestPublishRequest } from "./requestpublishrequest";
 import { SignDataRequest } from "./signdatarequest";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new GetCredentialsRequest(query);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -29,6 +30,31 @@ export class DID {
                 resolve(presentation);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+    }
+
+    static requestCredentials(disclosureRequest: SDKDID.CredentialDisclosureRequest): Promise<VerifiablePresentation> {
+        return new Promise((resolve, reject) => {
+            walletConnectManager.ensureConnectedToEssentials(async () => {
+                let request = new RequestCredentialsRequest(disclosureRequest);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.presentation) {
+                    console.warn("Missing presentation. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let presentationJson = JSON.stringify(response.result.presentation);
+                let presentation = VerifiablePresentation.parse(presentationJson);
+                resolve(presentation);
+            }, () => {
+                resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
@@ -40,7 +66,7 @@ export class DID {
         identifier?: string,
         expirationDate?: string,
     ): Promise<VerifiableCredential> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new IssueCredentialRequest(holder, types, subject, identifier, expirationDate);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -57,12 +83,14 @@ export class DID {
                 resolve(issuedCredential);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
 
     static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new ImportCredentialsRequest(credentials, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -83,12 +111,14 @@ export class DID {
                 resolve(importedCredentials);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
 
     static async deleteCredentials(credentialIds: string[], options?: DeleteCredentialOptions): Promise<string[]> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new DeleteCredentialsRequest(credentialIds, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -103,12 +133,14 @@ export class DID {
                 resolve(response.result.deletedcredentialsids);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
 
     static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new SignDataRequest(data, jwtExtra, signatureFieldName);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -130,12 +162,14 @@ export class DID {
                 resolve(signedData);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
 
     static async requestPublish(): Promise<string> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new RequestPublishRequest();
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -150,6 +184,8 @@ export class DID {
                 resolve(response.result.txid);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
     }
@@ -157,7 +193,7 @@ export class DID {
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any> {
         console.log("Essentials: app ID Credential generation flow started");
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new AppIDCredentialRequest(appInstanceDID, appDID);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
@@ -174,6 +210,8 @@ export class DID {
                 resolve(credential);
             }, () => {
                 resolve(null);
+            }).catch(e => {
+                reject(e);
             });
         });
 

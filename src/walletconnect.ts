@@ -1,8 +1,7 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
 //import Web3 from "web3";
-
 // HACK - Because wallet connect does not pop up the wallet when custom methods are sent
-import {signingMethods} from "@walletconnect/utils"
+import { signingMethods } from "@walletconnect/utils";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 signingMethods.push("essentials_url_intent");
 
 // https://docs.walletconnect.org/quick-start/dapps/web3-provider
@@ -33,17 +32,23 @@ class WalletConnectManager {
      * another mobile wallet. This is typically used to ensure that the wallet will be able to handle
      * commands such as DID operations.
      */
-    public async ensureConnectedToEssentials(onConnected: () => void, onCancelled: () => void) {
-        this.ensureConnected(async () => {
-            // Connected - Now check the peer info to make sure this is essentials.
-            let wc = await this.walletConnectProvider.getWalletConnector();
-            if (!wc.peerMeta || !wc.peerMeta.name || wc.peerMeta.name.toLowerCase().indexOf("essentials") < 0) {
-                throw new Error("This operation is only supported when connected to the Elastos Essentials wallet.");
-            }
-            else {
-                onConnected();
-            }
-        }, onCancelled);
+    public async ensureConnectedToEssentials(onConnected: () => void, onCancelled: () => void): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ensureConnected(async () => {
+                // Connected - Now check the peer info to make sure this is essentials.
+                let wc = await this.walletConnectProvider.getWalletConnector();
+                if (!wc.peerMeta || !wc.peerMeta.name || wc.peerMeta.name.toLowerCase().indexOf("essentials") < 0) {
+                    reject(new Error("This operation is only supported when connected to the Elastos Essentials wallet."));
+                }
+                else {
+                    onConnected();
+                    resolve();
+                }
+            }, () => {
+                onCancelled();
+                resolve();
+            });
+        });
     }
 
     private async setupWalletConnectProvider(): Promise<void> {
