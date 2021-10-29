@@ -16,7 +16,8 @@ export class IssueCredentialRequest implements ISerializableRequest {
         payload += "?subjectdid=" + encodeURIComponent(this.holder);
         if (this.identifier)
             payload += "&identifier=" + encodeURIComponent(this.identifier);
-        payload += "&types=[" + encodeURIComponent(this.types.join(",")) + "]";
+        if (this.types)
+            payload += "&types=" + encodeURIComponent(JSON.stringify(this.types));
         payload += "&properties=" + encodeURIComponent(JSON.stringify(this.subject));
 
         if (this.expirationDate)
