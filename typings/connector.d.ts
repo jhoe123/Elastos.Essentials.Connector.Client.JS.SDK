@@ -6,9 +6,15 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
     private callbackURL;
     getDisplayName(): Promise<string>;
     /**
-     * Method for debug purpose only.
+     * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
+     * or not.
      */
-    unlinkEssentialsDevice(): void;
+    hasWalletConnectSession(): boolean;
+    /**
+     * Disconnects the active wallet connect session if any, and deletes any session from disk
+     * in order to refresh start. This helps solving bad link states between dapps and wallets.
+     */
+    disconnectWalletConnect(): Promise<void>;
     /**
      * Force using an external WC provider instead of the one created by the essentials connector.
      * Calling this api is neede only in case the application already has its own provider and needs

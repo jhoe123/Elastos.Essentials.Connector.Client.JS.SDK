@@ -9,6 +9,63 @@ class WalletConnectManager {
     private walletConnectProvider: WalletConnectProvider = null;
     //private walletConnectWeb3: Web3 = null;
 
+    constructor() {
+        // Create WalletConnect Provider inconditionally to let dapps be able to
+        // check the WC status even without sending commands.
+        this.walletConnectProvider = new WalletConnectProvider({
+            rpc: {
+                20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
+                21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
+                128: "https://http-mainnet.hecochain.com",   // Heco mainnet
+                256: "https://http-testnet.hecochain.com",   // Heco testnet
+                42161: "https://arb1.arbitrum.io/rpc", // Arbitrum mainnet
+                43114: "https://api.avax.network/ext/bc/C/rpc", // Avalanche mainnet
+                43113: "https://api.avax-test.network/ext/bc/C/rpc", // Avalanche testnet
+                56: "https://bsc-dataseed.binance.org", // BSC mainnet
+                97: "https://data-seed-prebsc-1-s1.binance.org:8545", // BSC testnet
+                1: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // Ethereum mainnet
+                3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // Ethereum ropsten testnet
+                250: "https://rpcapi.fantom.network", // Fantom mainnet
+                4002: "https://rpc.testnet.fantom.network", // Fantom testnet
+                137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
+                80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
+            },
+            //bridge: "https://walletconnect.elastos.net/v2"
+            bridge: "https://wallet-connect.trinity-tech.cn/v2", // China
+            //bridge: "http://192.168.31.114:5001"
+            //bridge: "http://192.168.1.6:5001"
+            //bridge: "http://192.168.31.113:5555"
+        });
+    }
+
+    /**
+     * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
+     * or not.
+     */
+    public hasWalletConnectSession(): boolean {
+        return !!localStorage.getItem("walletconnect");
+    }
+
+    /**
+     * Disconnects the active wallet connect session if any, and deletes any session from disk
+     * in order to refresh start. This helps solving bad link states between dapps and wallets.
+     */
+    public async disconnectWalletConnect(): Promise<void> {
+        console.log("Clearing Essentials connector wallet connect");
+        let connector = await this.walletConnectProvider.getWalletConnector();
+        if (!this.walletConnectProvider || !connector)
+            return;
+
+        // Try to cleanly stop the session, if any.
+        try {
+            connector.killSession();
+        }
+        catch (e) { }
+
+        // Remove WC session info from disk.
+        localStorage.removeItem("walletconnect");
+    }
+
     /**
      * Makes sure that we are connected to Wallet Connect. If not, a wallet connect session
      * is started and user may have to scan a QR code to link to his device.
@@ -52,21 +109,6 @@ class WalletConnectManager {
     }
 
     private async setupWalletConnectProvider(): Promise<void> {
-        //  Create WalletConnect Provider
-        this.walletConnectProvider = new WalletConnectProvider({
-            rpc: {
-                20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
-                21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
-                128: "https://http-mainnet.hecochain.com",   // Heco mainnet
-                256: "https://http-testnet.hecochain.com",   // Heco testnet
-            },
-            //bridge: "https://walletconnect.elastos.net/v2"
-            bridge: "https://wallet-connect.trinity-tech.cn/v2", // China
-            //bridge: "http://192.168.31.114:5001"
-            //bridge: "http://192.168.1.6:5001"
-            //bridge: "http://192.168.31.113:5555"
-        });
-
         // Enable session (triggers QR Code modal)
         console.log("Connecting to wallet connect");
         let enabled = await this.walletConnectProvider.enable();

@@ -1,6 +1,17 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
 declare class WalletConnectManager {
     private walletConnectProvider;
+    constructor();
+    /**
+     * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
+     * or not.
+     */
+    hasWalletConnectSession(): boolean;
+    /**
+     * Disconnects the active wallet connect session if any, and deletes any session from disk
+     * in order to refresh start. This helps solving bad link states between dapps and wallets.
+     */
+    disconnectWalletConnect(): Promise<void>;
     /**
      * Makes sure that we are connected to Wallet Connect. If not, a wallet connect session
      * is started and user may have to scan a QR code to link to his device.

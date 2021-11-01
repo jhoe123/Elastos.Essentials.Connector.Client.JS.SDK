@@ -15,10 +15,19 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
     }
 
     /**
-     * Method for debug purpose only.
+     * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
+     * or not.
      */
-    public unlinkEssentialsDevice() {
-        // TODO
+    public hasWalletConnectSession(): boolean {
+        return walletConnectManager.hasWalletConnectSession();
+    }
+
+    /**
+     * Disconnects the active wallet connect session if any, and deletes any session from disk
+     * in order to refresh start. This helps solving bad link states between dapps and wallets.
+     */
+    public disconnectWalletConnect(): Promise<void> {
+        return walletConnectManager.disconnectWalletConnect();
     }
 
     /**
