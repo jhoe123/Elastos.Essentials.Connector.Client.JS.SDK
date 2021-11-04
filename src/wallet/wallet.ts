@@ -1,9 +1,9 @@
-import { PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import { Wallet as ConnWallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { walletConnectManager } from "../walletconnect";
 import { PayRequest } from "./payrequest";
 
 export class Wallet {
-  static pay(query: PayQuery): Promise<TransactionResult> {
+  static pay(query: ConnWallet.PayQuery): Promise<ConnWallet.TransactionResult> {
     return new Promise((resolve, reject) => {
       walletConnectManager.ensureConnectedToEssentials(async () => {
         let request = new PayRequest(query);

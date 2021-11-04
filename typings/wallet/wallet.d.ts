@@ -1,4 +1,4 @@
-import { PayQuery, TransactionResult } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/wallet";
+import { Wallet as ConnWallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 export declare class Wallet {
-    static pay(query: PayQuery): Promise<TransactionResult>;
+    static pay(query: ConnWallet.PayQuery): Promise<ConnWallet.TransactionResult>;
 }

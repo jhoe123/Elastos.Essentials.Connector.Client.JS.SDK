@@ -1,6 +1,5 @@
 import { DIDURL, JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID as SDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { DeleteCredentialOptions, SignedData } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
 import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
@@ -117,7 +116,7 @@ export class DID {
         });
     }
 
-    static async deleteCredentials(credentialIds: string[], options?: DeleteCredentialOptions): Promise<string[]> {
+    static async deleteCredentials(credentialIds: string[], options?: SDKDID.DeleteCredentialOptions): Promise<string[]> {
         return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new DeleteCredentialsRequest(credentialIds, options);
@@ -139,7 +138,7 @@ export class DID {
         });
     }
 
-    static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SignedData> {
+    static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SDKDID.SignedData> {
         return new Promise((resolve, reject) => {
             walletConnectManager.ensureConnectedToEssentials(async () => {
                 let request = new SignDataRequest(data, jwtExtra, signatureFieldName);

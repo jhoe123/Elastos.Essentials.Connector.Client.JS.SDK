@@ -10,7 +10,7 @@ export class ImportCredentialsRequest implements ISerializableRequest {
         let serializedCredentials = this.credentials.map(c => c.toString());
 
         let payload = "https://did.elastos.net/credimport";
-        payload += "?credentials=[" + encodeURIComponent(serializedCredentials.join(",")) + "]";
+        payload += "?credentials=" + encodeURIComponent(JSON.stringify(serializedCredentials));
         if (this.options) {
             if (this.options.forceToPublishCredentials)
                 payload += "&forceToPublishCredentials";
