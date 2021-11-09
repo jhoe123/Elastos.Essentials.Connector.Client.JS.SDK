@@ -7,7 +7,8 @@ export class ImportCredentialsRequest implements ISerializableRequest {
     }
 
     getPayload(): string {
-        let serializedCredentials = this.credentials.map(c => c.toString());
+        // VCs converted to clear json strings then back to clen JSON objects again
+        let serializedCredentials = this.credentials.map(c => JSON.parse(c.toString()));
 
         let payload = "https://did.elastos.net/credimport";
         payload += "?credentials=" + encodeURIComponent(JSON.stringify(serializedCredentials));
