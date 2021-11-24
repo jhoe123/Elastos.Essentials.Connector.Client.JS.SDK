@@ -30,11 +30,7 @@ class WalletConnectManager {
                 137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
                 80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
             },
-            //bridge: "https://walletconnect.elastos.net/v2"
-            bridge: "https://walletconnect.trinity-tech.cn/v2", // China
-            //bridge: "http://192.168.31.114:5001"
-            //bridge: "http://192.168.1.6:5001"
-            //bridge: "http://192.168.31.113:5555"
+            bridge: "https://walletconnect.trinity-tech.io/v2"
         });
     }
 
