@@ -1,10 +1,12 @@
 import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import type { provider } from "web3-core";
 export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
     private callbackURL;
     getDisplayName(): Promise<string>;
+    getWeb3Provider(): provider;
     /**
      * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
      * or not.

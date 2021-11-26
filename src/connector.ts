@@ -1,6 +1,7 @@
 import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import type { provider } from "web3-core";
 import { DID as ConnDID } from "./did/did";
 import { Wallet as ConnWallet } from "./wallet/wallet";
 import { walletConnectManager } from "./walletconnect";
@@ -12,6 +13,10 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
 
     async getDisplayName(): Promise<string> {
         return "Elastos Essentials";
+    }
+
+    getWeb3Provider(): provider {
+        return walletConnectManager.getWalletConnectProvider() as any;
     }
 
     /**
