@@ -30,7 +30,7 @@ class WalletConnectManager {
                 137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
                 80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
             },
-            bridge: "https://walletconnect.trinity-tech.io/v2"
+            bridge: "https://walletconnect.trinity-tech.cn/v2"
         });
     }
 
