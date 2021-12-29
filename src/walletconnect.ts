@@ -1,5 +1,6 @@
 //import Web3 from "web3";
 // HACK - Because wallet connect does not pop up the wallet when custom methods are sent
+import { logger } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { signingMethods } from "@walletconnect/utils";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 signingMethods.push("essentials_url_intent");
@@ -10,9 +11,16 @@ class WalletConnectManager {
     //private walletConnectWeb3: Web3 = null;
 
     constructor() {
+        this.createProvider();
+    }
+
+    private createProvider() {
+        logger.log("Essentials connector: creating a new WC provider");
+
         // Create WalletConnect Provider inconditionally to let dapps be able to
         // check the WC status even without sending commands.
         this.walletConnectProvider = new WalletConnectProvider({
+            //storageId: `${Math.random()}`, // Forces to reconnect to WC every time the app reloads. Not so convenient but "repairs" the WC link to the wallet
             rpc: {
                 20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
                 21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
@@ -30,7 +38,18 @@ class WalletConnectManager {
                 137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
                 80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
             },
-            bridge: "https://walletconnect.trinity-tech.cn/v2"
+            bridge: "https://walletconnect.trinity-tech.cn/v2",
+            qrcodeModalOptions: {
+                mobileLinks: [
+                    // NOTE: We add this entry twice, because if added only once, the default WC modal
+                    // is really not clear: the clickable top link to open essentials looks like a title,
+                    // and a big QR code is shown in the middle. Users are lost. So, better show 2 Essentials
+                    // links, better than that for now...
+                    "essentials",
+                    "essentials"
+                ]
+            }
+            //bridge: "http://192.168.1.4:5002"
         });
     }
 
@@ -47,19 +66,25 @@ class WalletConnectManager {
      * in order to refresh start. This helps solving bad link states between dapps and wallets.
      */
     public async disconnectWalletConnect(): Promise<void> {
-        console.log("Clearing Essentials connector wallet connect");
+        logger.log("Clearing Essentials connector wallet connect");
         let connector = await this.walletConnectProvider.getWalletConnector();
         if (!this.walletConnectProvider || !connector)
             return;
 
         // Try to cleanly stop the session, if any.
         try {
-            connector.killSession();
+            await connector.killSession();
         }
-        catch (e) { }
+        catch (e) {
+            logger.warn("Kill session error in :", e);
+        }
 
-        // Remove WC session info from disk.
-        localStorage.removeItem("walletconnect");
+        // IMPORTANT: the provider instance must be re-created otherwise, some cached info
+        // remains and wallet connect keeps sending commands in new sessions, with topic ids of
+        // the previous session!
+        this.createProvider();
+
+        logger.log("Wallet connect disconnection complete in the essentials connector");
     }
 
     /**
@@ -108,6 +133,14 @@ class WalletConnectManager {
         // Enable session (triggers QR Code modal)
         console.log("Connecting to wallet connect");
         let enabled = await this.walletConnectProvider.enable();
+
+        // Be informed when a disconnection happens, so we can create a new provider to reconnect.
+        // If we don't create a new provider, the old session remains used somehow and messages are lost
+        this.walletConnectProvider.on("disconnect", () => {
+            logger.log("Essentials connector: WC disconnect");
+            this.createProvider();
+        })
+
         console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
 
         //this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);

@@ -2,6 +2,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 declare class WalletConnectManager {
     private walletConnectProvider;
     constructor();
+    private createProvider;
     /**
      * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
      * or not.
