@@ -1,9 +1,7 @@
 //import Web3 from "web3";
 // HACK - Because wallet connect does not pop up the wallet when custom methods are sent
 import { logger } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { signingMethods } from "@walletconnect/utils";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-signingMethods.push("essentials_url_intent");
 
 // https://docs.walletconnect.org/quick-start/dapps/web3-provider
 class WalletConnectManager {
@@ -91,17 +89,32 @@ class WalletConnectManager {
      * Makes sure that we are connected to Wallet Connect. If not, a wallet connect session
      * is started and user may have to scan a QR code to link to his device.
      */
-    public async ensureConnected(onConnected: () => void, onCancelled: () => void) {
-        if (!this.walletConnectProvider || !this.walletConnectProvider.connected) {
+    public async ensureConnected(onConnected: (didPhysicalConnection: boolean) => void, onCancelled: () => void) {
+        // "Provider connected" = provider was enabled as web3 provider for future ethereum requests, but
+        // we're not sure about the physical link.
+        // "Connector connected" = web socket session link to essentials is established
+
+        // iOS hack: on iOS (iOS 15 at least), safari cannot call a universal link (essentials')
+        // 2 times from the same user action. the second attemp makes safari redirected to the web page
+        // instead of re-opening essentials. To workaround this problem, we detect if we are currently
+        // doing a "connect to WC + send custom url" combo. If so, if we just connected the websocket session,
+        // the user is still in essentials so when we send the custom request just after, we remove
+        // "essentials_url_intent" from WC's signing methods (the ones that make the universal link triggered).
+        let needsPhysicalConnection = false;
+        if (!this.walletConnectProvider.connector || !this.walletConnectProvider.connector.connected)
+            needsPhysicalConnection = true;
+
+        if (!this.walletConnectProvider || !this.walletConnectProvider.connected || !this.walletConnectProvider.connector || !this.walletConnectProvider.connector.connected) {
             await this.setupWalletConnectProvider();
-            if (this.walletConnectProvider.connected)
-                onConnected();
+            if (this.walletConnectProvider.connected && this.walletConnectProvider.connector.connected) {
+                onConnected(needsPhysicalConnection);
+            }
             else
                 onCancelled();
         }
         else {
             // Already connected
-            onConnected();
+            onConnected(false);
         }
     }
 
@@ -110,16 +123,16 @@ class WalletConnectManager {
      * another mobile wallet. This is typically used to ensure that the wallet will be able to handle
      * commands such as DID operations.
      */
-    public async ensureConnectedToEssentials(onConnected: () => void, onCancelled: () => void): Promise<void> {
+    public async ensureConnectedToEssentials(onConnected: (didPhysicalConnection: boolean) => void, onCancelled: () => void): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.ensureConnected(async () => {
+            this.ensureConnected(async (didPhysicalConnection) => {
                 // Connected - Now check the peer info to make sure this is essentials.
                 let wc = await this.walletConnectProvider.getWalletConnector();
                 if (!wc.peerMeta || !wc.peerMeta.name || wc.peerMeta.name.toLowerCase().indexOf("essentials") < 0) {
                     reject(new Error("This operation is only supported when connected to the Elastos Essentials wallet."));
                 }
                 else {
-                    onConnected();
+                    onConnected(didPhysicalConnection);
                     resolve();
                 }
             }, () => {
@@ -129,9 +142,44 @@ class WalletConnectManager {
         });
     }
 
+    /**
+     * See comments in ensureConnected(). If we just did a physical connection, don't trigger a deep link
+     * during the upcoming custom request. For this, remove "essentials_url_intent" from signing methods in
+     * WC.
+     */
+    public prepareSigningMethods(didPhysicalConnection: boolean) {
+        // DIRTY! hacking the connector's internal instance of the global and public signingMethods
+        // (cloned during connector's construction)
+        // See walletconnect-monorepo/packages/clients/core/src/index.ts (v1.0 branch)
+        let essentialsUrlIntentIndex = this.walletConnectProvider.connector['_signingMethods'].indexOf("essentials_url_intent");
+        if (didPhysicalConnection && essentialsUrlIntentIndex >= 0) {
+            this.walletConnectProvider.connector['_signingMethods'].splice(essentialsUrlIntentIndex, 1);
+        }
+        else if (!didPhysicalConnection && essentialsUrlIntentIndex === -1) {
+            this.walletConnectProvider.connector['_signingMethods'].push("essentials_url_intent");
+        }
+    }
+
+    /* private waitForAppToBeVisible(): Promise<void> {
+        if (document.visibilityState === "visible")
+            return; // Already visible, all good
+        else {
+            return new Promise<void>(resolve => {
+                // Wait for visibility to come
+                let listener = () => {
+                    if (document.visibilityState === "visible") {
+                        document.removeEventListener("visibilitychange", listener);
+                        resolve();
+                    }
+                };
+                document.addEventListener("visibilitychange", listener, false);
+            });
+        }
+    } */
+
     private async setupWalletConnectProvider(): Promise<void> {
         // Enable session (triggers QR Code modal)
-        console.log("Connecting to wallet connect");
+        console.log("Connecting to wallet connect", this.walletConnectProvider.connected, this.walletConnectProvider.connector.connected);
         let enabled = await this.walletConnectProvider.enable();
 
         // Be informed when a disconnection happens, so we can create a new provider to reconnect.
@@ -139,7 +187,7 @@ class WalletConnectManager {
         this.walletConnectProvider.on("disconnect", () => {
             logger.log("Essentials connector: WC disconnect");
             this.createProvider();
-        })
+        });
 
         console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
 

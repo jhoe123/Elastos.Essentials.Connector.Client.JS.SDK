@@ -5,7 +5,9 @@ import { PayRequest } from "./payrequest";
 export class Wallet {
   static pay(query: ConnWallet.PayQuery): Promise<ConnWallet.TransactionResult> {
     return new Promise((resolve, reject) => {
-      walletConnectManager.ensureConnectedToEssentials(async () => {
+      walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+        walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
         let request = new PayRequest(query);
         let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 

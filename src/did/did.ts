@@ -13,7 +13,9 @@ import { SignDataRequest } from "./signdatarequest";
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
         return new Promise(async (resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new GetCredentialsRequest(query);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -37,7 +39,9 @@ export class DID {
 
     static requestCredentials(disclosureRequest: SDKDID.CredentialDisclosureRequest): Promise<VerifiablePresentation> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new RequestCredentialsRequest(disclosureRequest);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -66,7 +70,9 @@ export class DID {
         expirationDate?: string,
     ): Promise<VerifiableCredential> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new IssueCredentialRequest(holder, types, subject, identifier, expirationDate);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -90,7 +96,9 @@ export class DID {
 
     static importCredentials(credentials: VerifiableCredential[], options?: SDKDID.ImportCredentialOptions): Promise<SDKDID.ImportedCredential[]> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new ImportCredentialsRequest(credentials, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -118,7 +126,9 @@ export class DID {
 
     static async deleteCredentials(credentialIds: string[], options?: SDKDID.DeleteCredentialOptions): Promise<string[]> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new DeleteCredentialsRequest(credentialIds, options);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -140,7 +150,9 @@ export class DID {
 
     static async signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SDKDID.SignedData> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new SignDataRequest(data, jwtExtra, signatureFieldName);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -169,7 +181,9 @@ export class DID {
 
     static async requestPublish(): Promise<string> {
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new RequestPublishRequest();
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -193,7 +207,9 @@ export class DID {
         console.log("Essentials: app ID Credential generation flow started");
 
         return new Promise((resolve, reject) => {
-            walletConnectManager.ensureConnectedToEssentials(async () => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
                 let request = new AppIDCredentialRequest(appInstanceDID, appDID);
                 let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
 
@@ -212,30 +228,6 @@ export class DID {
             }).catch(e => {
                 reject(e);
             });
-        });
-
-        return new Promise(async (resolve, reject) => {
-            try {
-                // No such credential, so we have to create one. Send an intent to get that from the did app
-                /*let res: { result: { credential: string } } = await intentPlugin.sendIntent("https://did.elastos.net/appidcredissue", {
-                    appinstancedid: appInstanceDID,
-                    appdid: appDID
-                });
-
-                console.log("Got response for the appidcredissue intent", res);
-
-                if (!res || !res.result || !res.result.credential) {
-                    console.warn("Missing credential information. The operation was maybe cancelled.");
-                    resolve(null);
-                    return;
-                }
-                let credential = didManager.VerifiableCredentialBuilder.fromJson(res.result.credential);
-                resolve(credential);*/
-            }
-            catch (err) {
-                console.error("generateAppIDCredential() error:", err);
-                resolve(null);
-            }
         });
     }
 }
