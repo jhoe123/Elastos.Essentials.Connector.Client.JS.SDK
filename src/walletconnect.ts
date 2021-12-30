@@ -105,8 +105,8 @@ class WalletConnectManager {
             needsPhysicalConnection = true;
 
         if (!this.walletConnectProvider || !this.walletConnectProvider.connected || !this.walletConnectProvider.connector || !this.walletConnectProvider.connector.connected) {
-            await this.setupWalletConnectProvider();
-            if (this.walletConnectProvider.connected && this.walletConnectProvider.connector.connected) {
+            let successfullyEnabled = await this.setupWalletConnectProvider();
+            if (successfullyEnabled && this.walletConnectProvider.connected && this.walletConnectProvider.connector.connected) {
                 onConnected(needsPhysicalConnection);
             }
             else
@@ -177,10 +177,28 @@ class WalletConnectManager {
         }
     } */
 
-    private async setupWalletConnectProvider(): Promise<void> {
+    private async setupWalletConnectProvider(): Promise<boolean> {
         // Enable session (triggers QR Code modal)
         console.log("Connecting to wallet connect", this.walletConnectProvider.connected, this.walletConnectProvider.connector.connected);
-        let enabled = await this.walletConnectProvider.enable();
+        try {
+            let enabled = await this.walletConnectProvider.enable();
+            console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
+        }
+        catch (e) {
+            if (new String(e).indexOf("User closed modal") >= 0) {
+                // HACK: reset provider's 'isConnecting' status by ourselves because this is not done by WC
+                // when the qr code modal is cancelled. Without this, the modal doen't appear any more later.
+                this.walletConnectProvider.isConnecting = false;
+                if (this.walletConnectProvider.connector) {
+                    this.walletConnectProvider.connector["_handshakeId"] = 0;
+                    this.walletConnectProvider.connector["_handshakeTopic"] = "";
+                }
+
+                return false; // cancelled
+            }
+            else
+                throw e;
+        }
 
         // Be informed when a disconnection happens, so we can create a new provider to reconnect.
         // If we don't create a new provider, the old session remains used somehow and messages are lost
@@ -189,9 +207,9 @@ class WalletConnectManager {
             this.createProvider();
         });
 
-        console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
-
         //this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
+
+        return true; // setup completed, enabled
     }
 
     /**
