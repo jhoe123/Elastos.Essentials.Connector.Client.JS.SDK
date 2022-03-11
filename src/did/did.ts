@@ -9,6 +9,7 @@ import { IssueCredentialRequest } from "./issuecredentialrequest";
 import { RequestCredentialsRequest } from "./requestcredentialsrequest";
 import { RequestPublishRequest } from "./requestpublishrequest";
 import { SignDataRequest } from "./signdatarequest";
+import { UpdateHiveVaultAddressRequest } from "./updatehivevaultaddressrequest";
 
 export class DID {
     static getCredentials(query: any): Promise<VerifiablePresentation> {
@@ -195,6 +196,30 @@ export class DID {
 
                 console.log("Transaction ID:", response.result.txid);
                 resolve(response.result.txid);
+            }, () => {
+                resolve(null);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+    }
+
+    static updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<SDKDID.UpdateHiveVaultAddressStatus> {
+        return new Promise((resolve, reject) => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
+                let request = new UpdateHiveVaultAddressRequest(vaultAddress, displayName);
+                let response: { result: { status: SDKDID.UpdateHiveVaultAddressStatus } } = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.status) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                console.log("Hive vault change result:", response.result.status);
+                resolve(response.result.status);
             }, () => {
                 resolve(null);
             }).catch(e => {

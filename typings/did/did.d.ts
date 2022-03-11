@@ -8,5 +8,6 @@ export declare class DID {
     static deleteCredentials(credentialIds: string[], options?: SDKDID.DeleteCredentialOptions): Promise<string[]>;
     static signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SDKDID.SignedData>;
     static requestPublish(): Promise<string>;
+    static updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<SDKDID.UpdateHiveVaultAddressStatus>;
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any>;
 }

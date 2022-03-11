@@ -79,6 +79,10 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.requestPublish();
     }
 
+    updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<DID.UpdateHiveVaultAddressStatus> {
+        return ConnDID.updateHiveVaultAddress(vaultAddress, displayName);
+    }
+
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any> {
         return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }
