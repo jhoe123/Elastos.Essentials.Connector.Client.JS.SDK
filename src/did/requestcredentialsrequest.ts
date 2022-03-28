@@ -1,5 +1,6 @@
-import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { connectivity, DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import type { ISerializableRequest } from "../iserializablerequest";
+import { getSafeApplicationDID } from "../utils";
 
 export class RequestCredentialsRequest implements ISerializableRequest {
     // TODO: use the ready query type with claims, customization
@@ -9,6 +10,12 @@ export class RequestCredentialsRequest implements ISerializableRequest {
     getPayload(): string {
         let payload = "https://did.elastos.net/requestcredentials";
         payload += "?request=" + encodeURIComponent(JSON.stringify(this.request));
+
+        let caller = getSafeApplicationDID();
+        console.log("CALLER", caller, connectivity)
+        if (caller)
+            payload += "&caller=" + encodeURIComponent(caller);
+
         return payload;
     }
 }

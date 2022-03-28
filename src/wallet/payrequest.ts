@@ -1,5 +1,6 @@
 import { Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import type { ISerializableRequest } from "../iserializablerequest";
+import { getSafeApplicationDID } from "../utils";
 
 export class PayRequest implements ISerializableRequest {
     constructor(private query: Wallet.PayQuery) {
@@ -15,6 +16,10 @@ export class PayRequest implements ISerializableRequest {
 
         if (this.query.memo)
             payload += "&memo=" + encodeURIComponent(this.query.memo);
+
+        let caller = getSafeApplicationDID();
+        if (caller)
+            payload += "&caller=" + encodeURIComponent(caller);
 
         return payload;
     }

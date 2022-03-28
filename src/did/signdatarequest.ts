@@ -1,4 +1,5 @@
 import type { ISerializableRequest } from "../iserializablerequest";
+import { getSafeApplicationDID } from "../utils";
 
 export class SignDataRequest implements ISerializableRequest {
     constructor(private data: string, private jwtExtra?: any, private signatureFieldName?: string) { }
@@ -12,6 +13,10 @@ export class SignDataRequest implements ISerializableRequest {
 
         if (this.signatureFieldName)
             payload += "&signatureFieldName=" + encodeURIComponent(this.signatureFieldName);
+
+        let caller = getSafeApplicationDID();
+        if (caller)
+            payload += "&caller=" + encodeURIComponent(caller);
 
         return payload;
     }

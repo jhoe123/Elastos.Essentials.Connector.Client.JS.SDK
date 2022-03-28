@@ -1,6 +1,7 @@
 import { JSONObject } from "@elastosfoundation/did-js-sdk";
 import moment from "moment";
 import type { ISerializableRequest } from "../iserializablerequest";
+import { getSafeApplicationDID } from "../utils";
 
 export class IssueCredentialRequest implements ISerializableRequest {
     constructor(
@@ -24,6 +25,10 @@ export class IssueCredentialRequest implements ISerializableRequest {
             payload += "&expirationDate=" + encodeURIComponent(this.expirationDate);
         else // Default expiration if none given: 5 years.
             payload += "&expirationDate=" + encodeURIComponent(moment().add(5, "years").toISOString());
+
+        let caller = getSafeApplicationDID();
+        if (caller)
+            payload += "&caller=" + encodeURIComponent(caller);
 
         return payload;
     }
