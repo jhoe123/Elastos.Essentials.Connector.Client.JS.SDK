@@ -4,6 +4,7 @@ import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
 import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
+import { ImportCredentialContextRequest } from "./importcredentialcontextrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { IssueCredentialRequest } from "./issuecredentialrequest";
 import { RequestCredentialsRequest } from "./requestcredentialsrequest";
@@ -220,6 +221,33 @@ export class DID {
 
                 console.log("Hive vault change result:", response.result.status);
                 resolve(response.result.status);
+            }, () => {
+                resolve(null);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+    }
+
+    static importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<SDKDID.ImportedCredential> {
+        return new Promise((resolve, reject) => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
+                let request = new ImportCredentialContextRequest(serviceName, contextCredential);
+                let response: any = await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result || !response.result.importedcredential) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let importedCredential: SDKDID.ImportedCredential = {
+                    id: DIDURL.from(response.result.importedcredential)
+                };
+                console.log("Imported credential context:", importedCredential);
+                resolve(importedCredential);
             }, () => {
                 resolve(null);
             }).catch(e => {

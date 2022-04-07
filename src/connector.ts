@@ -83,6 +83,10 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.updateHiveVaultAddress(vaultAddress, displayName);
     }
 
+    importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<DID.ImportedCredential> {
+        return ConnDID.importCredentialContext(serviceName, contextCredential);
+    }
+
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any> {
         return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }

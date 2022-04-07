@@ -1,4 +1,4 @@
-import { connectivity, DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
+import { DID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import type { ISerializableRequest } from "../iserializablerequest";
 import { getSafeApplicationDID } from "../utils";
 
@@ -12,7 +12,6 @@ export class RequestCredentialsRequest implements ISerializableRequest {
         payload += "?request=" + encodeURIComponent(JSON.stringify(this.request));
 
         let caller = getSafeApplicationDID();
-        console.log("CALLER", caller, connectivity)
         if (caller)
             payload += "&caller=" + encodeURIComponent(caller);
 

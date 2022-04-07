@@ -9,5 +9,6 @@ export declare class DID {
     static signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<SDKDID.SignedData>;
     static requestPublish(): Promise<string>;
     static updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<SDKDID.UpdateHiveVaultAddressStatus>;
+    static importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<SDKDID.ImportedCredential>;
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any>;
 }

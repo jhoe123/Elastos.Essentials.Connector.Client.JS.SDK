@@ -35,6 +35,7 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
     signData(data: string, jwtExtra?: any, signatureFieldName?: string): Promise<DID.SignedData>;
     requestPublish(): Promise<string>;
     updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<DID.UpdateHiveVaultAddressStatus>;
+    importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<DID.ImportedCredential>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
     pay(query: any): Promise<Wallet.TransactionResult>;
     voteForDPoS(): Promise<void>;
