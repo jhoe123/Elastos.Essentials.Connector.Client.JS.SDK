@@ -11,4 +11,5 @@ export declare class DID {
     static updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<SDKDID.UpdateHiveVaultAddressStatus>;
     static importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<SDKDID.ImportedCredential>;
     static generateAppIDCredential(appInstanceDID: string, appDID: string): Promise<any>;
+    static generateHiveBackupCredential?(sourceHiveNodeDID: string, targetHiveNodeDID: string, targetNodeURL: string): Promise<VerifiableCredential>;
 }

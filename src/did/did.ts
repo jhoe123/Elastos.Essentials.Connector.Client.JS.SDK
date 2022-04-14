@@ -4,6 +4,7 @@ import { walletConnectManager } from "../walletconnect";
 import { AppIDCredentialRequest } from "./appidcredentialrequest";
 import { DeleteCredentialsRequest } from "./deletecredentialsrequest";
 import { GetCredentialsRequest } from "./getcredentialsrequest";
+import { HiveBackupCredentialRequest, HiveBackupCredentialResponse } from "./hivebackupcredentialrequest";
 import { ImportCredentialContextRequest } from "./importcredentialcontextrequest";
 import { ImportCredentialsRequest } from "./importcredentialsrequest";
 import { IssueCredentialRequest } from "./issuecredentialrequest";
@@ -275,6 +276,34 @@ export class DID {
                 let credential = await VerifiableCredential.parse(response.result.credential);
 
                 console.log("App ID credential returned by Essentials:", credential);
+                resolve(credential);
+            }, () => {
+                resolve(null);
+            }).catch(e => {
+                reject(e);
+            });
+        });
+    }
+
+    static generateHiveBackupCredential?(sourceHiveNodeDID: string, targetHiveNodeDID: string, targetNodeURL: string): Promise<VerifiableCredential> {
+        console.log("Essentials: app ID Credential generation flow started");
+
+        return new Promise((resolve, reject) => {
+            walletConnectManager.ensureConnectedToEssentials(async (didPhysicalConnection) => {
+                walletConnectManager.prepareSigningMethods(didPhysicalConnection);
+
+                let request = new HiveBackupCredentialRequest(sourceHiveNodeDID, targetHiveNodeDID, targetNodeURL);
+                let response = <HiveBackupCredentialResponse>await walletConnectManager.sendCustomRequest(request.getPayload());
+
+                if (!response || !response.result) {
+                    console.warn("Missing result data. The operation was maybe cancelled.", response);
+                    resolve(null);
+                    return;
+                }
+
+                let credential = await VerifiableCredential.parse(response.result.credential);
+
+                console.log("Hive backup credential returned by Essentials:", credential);
                 resolve(credential);
             }, () => {
                 resolve(null);

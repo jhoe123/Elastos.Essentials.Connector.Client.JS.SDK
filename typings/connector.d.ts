@@ -37,6 +37,7 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
     updateHiveVaultAddress(vaultAddress: string, displayName: string): Promise<DID.UpdateHiveVaultAddressStatus>;
     importCredentialContext(serviceName: string, contextCredential: VerifiableCredential): Promise<DID.ImportedCredential>;
     generateAppIdCredential(appInstanceDID: string, appDID: string): Promise<any>;
+    generateHiveBackupCredential?(sourceHiveNodeDID: string, targetHiveNodeDID: string, targetNodeURL: string): Promise<VerifiableCredential>;
     pay(query: any): Promise<Wallet.TransactionResult>;
     voteForDPoS(): Promise<void>;
     voteForCRCouncil(): Promise<void>;

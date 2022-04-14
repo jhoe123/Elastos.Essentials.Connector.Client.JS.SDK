@@ -91,6 +91,10 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
         return ConnDID.generateAppIDCredential(appInstanceDID, appDID);
     }
 
+    generateHiveBackupCredential?(sourceHiveNodeDID: string, targetHiveNodeDID: string, targetNodeURL: string): Promise<VerifiableCredential> {
+        return ConnDID.generateHiveBackupCredential(sourceHiveNodeDID, targetHiveNodeDID, targetNodeURL);
+    }
+
     pay(query: any): Promise<Wallet.TransactionResult> {
         return ConnWallet.pay(query);
     }
