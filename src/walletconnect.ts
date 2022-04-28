@@ -36,7 +36,7 @@ class WalletConnectManager {
                 137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
                 80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
             },
-            bridge: "https://walletconnect.trinity-tech.cn/v2",
+            bridge: "https://walletconnect.elastos.net/v2",
             qrcodeModalOptions: {
                 mobileLinks: [
                     // NOTE: We add this entry twice, because if added only once, the default WC modal
