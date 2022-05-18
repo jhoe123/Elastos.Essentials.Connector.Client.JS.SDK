@@ -1,6 +1,6 @@
 ## Architecture
 
-This implementation uses Wallet Connect internally (originally targetting ethereum) in order to also
+This implementation uses Wallet Connect internally (originally targetting Ethereum) in order to also
 manage custom DID, Hive and other intents.
 
 ## Build
