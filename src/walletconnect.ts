@@ -180,25 +180,36 @@ class WalletConnectManager {
     private async setupWalletConnectProvider(): Promise<boolean> {
         // Enable session (triggers QR Code modal)
         console.log("Connecting to wallet connect", this.walletConnectProvider.connected, this.walletConnectProvider.connector.connected);
-        try {
-            let enabled = await this.walletConnectProvider.enable();
-            console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
-        }
-        catch (e) {
-            if (new String(e).indexOf("User closed modal") >= 0) {
-                // HACK: reset provider's 'isConnecting' status by ourselves because this is not done by WC
-                // when the qr code modal is cancelled. Without this, the modal doen't appear any more later.
-                this.walletConnectProvider.isConnecting = false;
-                if (this.walletConnectProvider.connector) {
-                    this.walletConnectProvider.connector["_handshakeId"] = 0;
-                    this.walletConnectProvider.connector["_handshakeTopic"] = "";
-                }
 
-                return false; // cancelled
+        let connected = await new Promise(async (resolve, reject) => {
+            // Catch user cancellation in essentials (closed the WC session request screen) to reject
+            // the promise.
+            this.walletConnectProvider.wc.on("disconnect", (e, p) => {
+                console.log("User cancelled the WC connection request in Essentials");
+                this.hackyResetWCConnectingStatus();
+                resolve(false);
+            });
+
+            try {
+                let enabled = await this.walletConnectProvider.enable();
+                console.log("CONNECTED to wallet connect", enabled, this.walletConnectProvider);
+
+                resolve(true);
             }
-            else
-                throw e;
-        }
+            catch (e) {
+                // User closed the qr code popup on the dapp side
+                if (new String(e).indexOf("User closed modal") >= 0) {
+                    this.hackyResetWCConnectingStatus();
+                    resolve(false); // cancelled
+                }
+                else {
+                    reject(e);
+                }
+            }
+        });
+
+        if (!connected)
+            return false;
 
         // Be informed when a disconnection happens, so we can create a new provider to reconnect.
         // If we don't create a new provider, the old session remains used somehow and messages are lost
@@ -210,6 +221,16 @@ class WalletConnectManager {
         //this.walletConnectWeb3 = new Web3(this.walletConnectProvider as any /* hack */);
 
         return true; // setup completed, enabled
+    }
+
+    private hackyResetWCConnectingStatus() {
+        // HACK: reset provider's 'isConnecting' status by ourselves because this is not done by WC
+        // when the qr code modal is cancelled. Without this, the modal doen't appear any more later.
+        this.walletConnectProvider.isConnecting = false;
+        if (this.walletConnectProvider.connector) {
+            this.walletConnectProvider.connector["_handshakeId"] = 0;
+            this.walletConnectProvider.connector["_handshakeTopic"] = "";
+        }
     }
 
     /**
