@@ -3,6 +3,7 @@ import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import type { provider } from "web3-core";
 import { DID as ConnDID } from "./did/did";
+import { UX } from "./ux/ux";
 import { Wallet as ConnWallet } from "./wallet/wallet";
 import { walletConnectManager } from "./walletconnect";
 
@@ -113,5 +114,12 @@ export class EssentialsConnector implements Interfaces.Connectors.IConnector {
 
     sendSmartContractTransaction(payload: any): Promise<string> {
         throw new Error("Method not implemented.");
+    }
+
+    /**
+     * UI API
+     */
+    onBoard(feature: string, title: string, introduction: string, button: string) {
+        return UX.onBoard(feature, title, introduction, button);
     }
 }

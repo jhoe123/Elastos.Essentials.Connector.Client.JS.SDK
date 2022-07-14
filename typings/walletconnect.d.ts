@@ -31,6 +31,7 @@ declare class WalletConnectManager {
      */
     prepareSigningMethods(didPhysicalConnection: boolean): void;
     private setupWalletConnectProvider;
+    private hackyResetWCConnectingStatus;
     /**
      * Force using an external WC provider instead of our own. Useful in apps that have to use wallet
      * connect independently as well.

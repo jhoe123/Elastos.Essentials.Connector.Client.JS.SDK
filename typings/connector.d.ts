@@ -43,4 +43,8 @@ export declare class EssentialsConnector implements Interfaces.Connectors.IConne
     voteForCRCouncil(): Promise<void>;
     voteForCRProposal(): Promise<void>;
     sendSmartContractTransaction(payload: any): Promise<string>;
+    /**
+     * UI API
+     */
+    onBoard(feature: string, title: string, introduction: string, button: string): Promise<void>;
 }
