@@ -20,21 +20,60 @@ class WalletConnectManager {
         this.walletConnectProvider = new WalletConnectProvider({
             //storageId: `${Math.random()}`, // Forces to reconnect to WC every time the app reloads. Not so convenient but "repairs" the WC link to the wallet
             rpc: {
-                20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
-                21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
-                128: "https://http-mainnet.hecochain.com",   // Heco mainnet
-                256: "https://http-testnet.hecochain.com",   // Heco testnet
+                // Arbitrum
                 42161: "https://arb1.arbitrum.io/rpc", // Arbitrum mainnet
+
+                // Avalanche
                 43114: "https://api.avax.network/ext/bc/C/rpc", // Avalanche mainnet
                 43113: "https://api.avax-test.network/ext/bc/C/rpc", // Avalanche testnet
+
+                // BNB smart chain
                 56: "https://bsc-dataseed.binance.org", // BSC mainnet
                 97: "https://data-seed-prebsc-1-s1.binance.org:8545", // BSC testnet
+
+                // Cronos
+                25: 'https://evm.cronos.org', // Cronos mainnet
+
+                // Elastos
+                20: "https://api.elastos.io/eth",           // Elastos ESC mainnet
+                21: "https://api-testnet.elastos.io/eth",   // Elastos ESC testnet
+
+                // Ethereum
                 1: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // Ethereum mainnet
                 3: "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // Ethereum ropsten testnet
+
+                // Fantom
                 250: "https://rpcapi.fantom.network", // Fantom mainnet
                 4002: "https://rpc.testnet.fantom.network", // Fantom testnet
+
+                // Fuse
+                122: 'https://rpc.fuse.io', // Fuse mainnet,
+
+                // Fusion
+                32659: 'https://mainnet.anyswap.exchange', // Fusion mainnet
+
+                // Gnosis
+                100: 'https://dai.poa.network', // Gnosis mainnet
+
+                // Heco
+                128: "https://http-mainnet.hecochain.com",   // Heco mainnet
+                256: "https://http-testnet.hecochain.com",   // Heco testnet
+
+                // HSC
+                70: 'https://http-mainnet2.hoosmartchain.com', // HOO smart chain mainnet
+                170: 'https://http-testnet.hoosmartchain.com', // HOO smart chain testnet
+
+                // IoTeX
+                4689: 'https://babel-api.mainnet.iotex.io', // IoTeX mainnet
+                4690: 'https://babel-api.testnet.iotex.io', // IoTeX testnet
+
+                // Polygon
                 137: "https://rpc-mainnet.maticvigil.com", // Polygon mainnet
-                80001: "https://rpc-mumbai.maticvigil.com" // Polygon testnet
+                80001: "https://rpc-mumbai.maticvigil.com", // Polygon testnet
+
+                // Telos
+                40: 'https://mainnet.telos.net/evm', // Telos mainnet
+                41: 'https://testnet.telos.net/evm' // Telos testnet
             },
             bridge: "https://walletconnect.elastos.net/v2",
             qrcodeModalOptions: {
