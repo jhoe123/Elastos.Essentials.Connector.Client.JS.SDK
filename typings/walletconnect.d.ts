@@ -4,6 +4,13 @@ declare class WalletConnectManager {
     constructor();
     private createProvider;
     /**
+     * Sets additional custom RPC urls.
+     */
+    setCustomRpcUrls(customRpcUrls: {
+        chainId: number;
+        rpcUrl: string;
+    }[]): void;
+    /**
      * Tells whether a wallet connect session exists on disk or not, not matter if it's connected
      * or not.
      */

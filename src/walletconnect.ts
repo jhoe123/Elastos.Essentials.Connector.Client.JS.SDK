@@ -51,6 +51,7 @@ class WalletConnectManager {
 
                 // Fusion
                 32659: 'https://mainnet.anyswap.exchange', // Fusion mainnet
+                46688: 'https://testnet.fusionnetwork.io', // Fusion testnet
 
                 // Gnosis
                 100: 'https://dai.poa.network', // Gnosis mainnet
@@ -88,6 +89,15 @@ class WalletConnectManager {
             }
             //bridge: "http://192.168.1.4:5002"
         });
+    }
+
+    /**
+     * Sets additional custom RPC urls.
+     */
+    public setCustomRpcUrls(customRpcUrls: { chainId: number, rpcUrl: string }[]) {
+        for (let entry of customRpcUrls) {
+            this.walletConnectProvider.updateRpcUrl(entry.chainId, entry.rpcUrl);
+        }
     }
 
     /**

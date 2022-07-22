@@ -2,9 +2,22 @@ import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elast
 import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import type { provider } from "web3-core";
+export declare type ConnectorOptions = {
+    /**
+     * List of custom RPC chain ID -> URL that the app supports.
+     * This replaces or adds to the default rpc urls already provided by the connector by default.
+     */
+    customRpcUrls?: [
+        {
+            chainId: number;
+            rpcUrl: string;
+        }
+    ];
+};
 export declare class EssentialsConnector implements Interfaces.Connectors.IConnector {
     name: string;
     private callbackURL;
+    constructor(options?: ConnectorOptions);
     getDisplayName(): Promise<string>;
     getWeb3Provider(): provider;
     /**

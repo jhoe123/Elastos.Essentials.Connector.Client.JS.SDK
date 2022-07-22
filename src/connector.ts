@@ -7,10 +7,25 @@ import { UX } from "./ux/ux";
 import { Wallet as ConnWallet } from "./wallet/wallet";
 import { walletConnectManager } from "./walletconnect";
 
+export type ConnectorOptions = {
+    /**
+     * List of custom RPC chain ID -> URL that the app supports.
+     * This replaces or adds to the default rpc urls already provided by the connector by default.
+     */
+    customRpcUrls?: [
+        { chainId: number, rpcUrl: string }
+    ]
+}
+
 export class EssentialsConnector implements Interfaces.Connectors.IConnector {
     public name: string = "essentials";
 
     private callbackURL: string = null;
+
+    constructor(options?: ConnectorOptions) {
+        if (options && options.customRpcUrls)
+            walletConnectManager.setCustomRpcUrls(options.customRpcUrls);
+    }
 
     async getDisplayName(): Promise<string> {
         return "Elastos Essentials";
