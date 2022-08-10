@@ -31,7 +31,7 @@ export default {
 		'moment',
 		'rxjs',
 		'@walletconnect/client',
-		'@walletconnect/web3-provider',
+		'@elabox/web3-provider',
 		'@walletconnect/utils',
 
 		// TODO: theoretically we shouldn't have to remove this manually, as we don't include it ourselves.

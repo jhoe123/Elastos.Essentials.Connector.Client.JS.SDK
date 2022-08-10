@@ -1,4 +1,4 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@elabox/web3-provider";
 declare class WalletConnectManager {
     private walletConnectProvider;
     constructor();

@@ -1,7 +1,7 @@
 //import Web3 from "web3";
 // HACK - Because wallet connect does not pop up the wallet when custom methods are sent
 import { logger } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@elabox/web3-provider";
 
 // https://docs.walletconnect.org/quick-start/dapps/web3-provider
 class WalletConnectManager {

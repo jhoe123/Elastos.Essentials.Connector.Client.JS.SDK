@@ -1,6 +1,6 @@
 import { JSONObject, VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { DID, Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@elabox/web3-provider";
 import type { provider } from "web3-core";
 export declare type ConnectorOptions = {
     /**
